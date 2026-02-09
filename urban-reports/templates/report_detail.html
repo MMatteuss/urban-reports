@@ -1,50 +1,192 @@
 {% extends "base.html" %}
 
+{% block title %}{{ report.title }} - Urban Reports{% endblock %}
+
 {% block content %}
 <div class="row">
     <div class="col-md-8">
-        <h1>{{ post.title }}</h1>
-        <p class="text-muted">Publicado por {{ post.author.username }} em {{ post.date.strftime('%d/%m/%Y') }} às {{ post.hour }}</p>
-        
-        <div class="mb-4">
-            {% for photo in post.photos %}
-                <img src="{{ url_for('static', filename='uploads/' + photo.filename) }}" class="img-fluid mb-2" alt="...">
-            {% endfor %}
+        <div class="card shadow mb-4">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-start mb-3">
+                    <h1 class="card-title">{{ report.title }}</h1>
+                    <span class="report-status status-{{ report.status }}">
+                        {{ report.status|replace('_', ' ')|title }}
+                    </span>
+                </div>
+                
+                <div class="mb-3">
+                    <span class="badge {{ 'bg-buraco' if report.category == 'buraco' else 'bg-esgoto' if report.category == 'esgoto' else 'bg-lixo' if report.category == 'lixo' else 'bg-poste' if report.category == 'poste' else 'bg-outros' }}">
+                        {{ report.category }}
+                    </span>
+                    <small class="text-muted ms-2">
+                        <i class="bi bi-geo-alt"></i> {{ report.address }}
+                    </small>
+                </div>
+                
+                <div class="mb-4">
+                    <h5>Descrição:</h5>
+                    <p class="card-text">{{ report.description }}</p>
+                </div>
+                
+                <!-- Fotos -->
+                {% if report.photos %}
+                <div class="mb-4">
+                    <h5>Fotos:</h5>
+                    <div class="row">
+                        {% for photo in report.photos %}
+                        <div class="col-md-4 mb-3">
+                            <img src="{{ url_for('static', filename='uploads/reports/' + photo.filename) }}" 
+                                 class="img-fluid rounded report-image" 
+                                 alt="Foto do reporte"
+                                 style="cursor: pointer;"
+                                 onclick="openModal(this.src)">
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+                {% endif %}
+                
+                <div class="d-flex justify-content-between text-muted">
+                    <small>
+                        <i class="bi bi-person"></i> 
+                        {{ report.author.name }} {{ report.author.surname }}
+                    </small>
+                    <small>
+                        <i class="bi bi-calendar"></i> 
+                        {{ report.created_at.strftime('%d/%m/%Y %H:%M') }}
+                    </small>
+                </div>
+            </div>
         </div>
         
-        <p>{{ post.description }}</p>
-        
-        {% if post.latitude and post.longitude %}
-            <div class="mt-4">
-                <h5>Localização</h5>
-                <p>Latitude: {{ post.latitude }}, Longitude: {{ post.longitude }}</p>
-                <!-- Aqui você pode integrar um mapa, como o Google Maps ou OpenStreetMap -->
-            </div>
-        {% endif %}
-        
-        <hr>
-        
-        <h4>Comentários</h4>
-        {% for comment in post.comments %}
-            <div class="card mb-3">
-                <div class="card-body">
-                    <h6 class="card-subtitle mb-2 text-muted">{{ comment.author.username }} em {{ comment.date.strftime('%d/%m/%Y %H:%M') }}</h6>
-                    <p class="card-text">{{ comment.content }}</p>
+        <!-- Comentários -->
+        <div class="card shadow mb-4">
+            <div class="card-body">
+                <h5 class="card-title">Comentários</h5>
+                
+                {% if report.comments %}
+                    {% for comment in report.comments %}
+                    <div class="comment-card mb-3 p-3">
+                        <div class="d-flex justify-content-between align-items-start mb-2">
+                            <strong>{{ comment.author.name }} {{ comment.author.surname }}</strong>
+                            <small class="text-muted">{{ comment.created_at.strftime('%d/%m/%Y %H:%M') }}</small>
+                        </div>
+                        <p class="mb-0">{{ comment.content }}</p>
+                    </div>
+                    {% endfor %}
+                {% else %}
+                    <p class="text-muted">Nenhum comentário ainda. Seja o primeiro a comentar!</p>
+                {% endif %}
+                
+                {% if current_user.is_authenticated %}
+                <form method="POST" action="{{ url_for('add_comment', report_id=report.id) }}" class="mt-3">
+                    <div class="mb-3">
+                        <textarea class="form-control" name="content" rows="3" 
+                                  placeholder="Adicione um comentário..." required></textarea>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Comentar</button>
+                </form>
+                {% else %}
+                <div class="alert alert-info mt-3">
+                    <a href="{{ url_for('login') }}" class="alert-link">Faça login</a> para adicionar um comentário.
                 </div>
+                {% endif %}
             </div>
-        {% endfor %}
-        
-        {% if current_user.is_authenticated %}
-            <form method="POST" action="{{ url_for('add_comment', post_id=post.id) }}">
-                <div class="mb-3">
-                    <label for="content" class="form-label">Adicionar Comentário</label>
-                    <textarea class="form-control" id="content" name="content" rows="3" required></textarea>
+        </div>
+    </div>
+    
+    <!-- Sidebar -->
+    <div class="col-md-4">
+        <div class="card shadow mb-4">
+            <div class="card-body">
+                <h5 class="card-title">Informações</h5>
+                <ul class="list-group list-group-flush">
+                    <li class="list-group-item d-flex justify-content-between">
+                        <span>Categoria:</span>
+                        <strong>{{ report.category|title }}</strong>
+                    </li>
+                    <li class="list-group-item d-flex justify-content-between">
+                        <span>Status:</span>
+                        <strong>{{ report.status|replace('_', ' ')|title }}</strong>
+                    </li>
+                    <li class="list-group-item d-flex justify-content-between">
+                        <span>Reportado por:</span>
+                        <strong>{{ report.author.name }}</strong>
+                    </li>
+                    <li class="list-group-item d-flex justify-content-between">
+                        <span>Data:</span>
+                        <strong>{{ report.created_at.strftime('%d/%m/%Y') }}</strong>
+                    </li>
+                    {% if report.latitude and report.longitude %}
+                    <li class="list-group-item">
+                        <small class="text-muted">
+                            <i class="bi bi-geo-alt"></i> 
+                            {{ report.latitude|round(6) }}, {{ report.longitude|round(6) }}
+                        </small>
+                    </li>
+                    {% endif %}
+                </ul>
+                
+                {% if current_user.is_authenticated and current_user.id == report.user_id %}
+                <div class="mt-3">
+                    <a href="#" class="btn btn-outline-primary btn-sm">
+                        <i class="bi bi-pencil"></i> Editar
+                    </a>
+                    <a href="#" class="btn btn-outline-danger btn-sm">
+                        <i class="bi bi-trash"></i> Excluir
+                    </a>
                 </div>
-                <button type="submit" class="btn btn-primary">Comentar</button>
-            </form>
-        {% else %}
-            <p><a href="{{ url_for('login') }}">Faça login</a> para comentar.</p>
+                {% endif %}
+            </div>
+        </div>
+        
+        <!-- Mapa -->
+        {% if report.latitude and report.longitude %}
+        <div class="card shadow">
+            <div class="card-body">
+                <h5 class="card-title">Localização</h5>
+                <div id="map" style="height: 300px; border-radius: 8px;"></div>
+            </div>
+        </div>
         {% endif %}
     </div>
 </div>
+
+<!-- Modal para imagens -->
+<div class="modal fade" id="imageModal" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-body text-center">
+                <img id="modalImage" src="" class="img-fluid" alt="">
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
+
+{% block extra_js %}
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script>
+function openModal(src) {
+    document.getElementById('modalImage').src = src;
+    new bootstrap.Modal(document.getElementById('imageModal')).show();
+}
+
+{% if report.latitude and report.longitude %}
+// Inicializar mapa
+document.addEventListener('DOMContentLoaded', function() {
+    const map = L.map('map').setView([{{ report.latitude }}, {{ report.longitude }}], 15);
+    
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '© OpenStreetMap contributors'
+    }).addTo(map);
+    
+    L.marker([{{ report.latitude }}, {{ report.longitude }}])
+        .addTo(map)
+        .bindPopup('{{ report.title }}')
+        .openPopup();
+});
+{% endif %}
+</script>
 {% endblock %}

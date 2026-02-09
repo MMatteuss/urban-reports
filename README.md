@@ -77,6 +77,7 @@ urban-reports/
 │   ├── dashboard.html       # Dashboard do usuário
 │   ├── profile.html         # Perfil do usuário
 │   ├── new_report.html      # Formulário de novo reporte
+│   ├── search.html          # Busca
 │   ├── report_detail.html   # Detalhes do reporte
 │   └── edit_profile.html    # Edição de perfil
 │

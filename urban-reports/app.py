@@ -56,6 +56,7 @@ class User(UserMixin, db.Model):
     
     reports = db.relationship('Report', backref='author', lazy=True)
     comments = db.relationship('Comment', backref='author', lazy=True)
+    votes = db.relationship('Vote', backref='voter', lazy=True)  # Adicione esta linha
 
 class Report(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -71,6 +72,7 @@ class Report(db.Model):
     
     photos = db.relationship('ReportPhoto', backref='report', lazy=True)
     comments = db.relationship('Comment', backref='report', lazy=True)
+    votes = db.relationship('Vote', backref='voted_report', lazy=True)  # Adicione esta linha
 
 class ReportPhoto(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -83,6 +85,20 @@ class Comment(db.Model):
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
     report_id = db.Column(db.Integer, db.ForeignKey('report.id'), nullable=False)
+
+# Adicione esta classe depois do modelo Comment
+class Vote(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    type = db.Column(db.String(10), nullable=False)  # upvote, downvote
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    report_id = db.Column(db.Integer, db.ForeignKey('report.id'), nullable=False)
+
+# Adicione estas relações aos modelos User e Report
+# Na classe User, adicione:
+# votes = db.relationship('Vote', backref='voter', lazy=True)
+
+# Na classe Report, adicione:
+# votes = db.relationship('Vote', backref='voted_report', lazy=True)
 
 @login_manager.user_loader
 def load_user(user_id):
