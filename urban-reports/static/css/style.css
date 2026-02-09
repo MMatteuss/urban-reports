@@ -1,0 +1,197 @@
+/* Custom Styles */
+:root {
+    --primary-color: #4361ee;
+    --secondary-color: #3a0ca3;
+    --success-color: #4cc9f0;
+    --danger-color: #f72585;
+    --warning-color: #f8961e;
+    --info-color: #7209b7;
+}
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+main {
+    flex: 1;
+}
+
+/* Navbar */
+.navbar-brand {
+    font-weight: 700;
+    font-size: 1.5rem;
+}
+
+/* Cards */
+.card {
+    border: none;
+    border-radius: 15px;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 20px rgba(0,0,0,0.1) !important;
+}
+
+.card-img-top {
+    height: 200px;
+    object-fit: cover;
+    border-radius: 15px 15px 0 0;
+}
+
+/* Report cards */
+.report-card {
+    cursor: pointer;
+}
+
+.report-status {
+    padding: 5px 15px;
+    border-radius: 20px;
+    font-size: 0.8rem;
+    font-weight: 600;
+}
+
+.status-pendente {
+    background-color: #fff3cd;
+    color: #856404;
+}
+
+.status-em_andamento {
+    background-color: #d1ecf1;
+    color: #0c5460;
+}
+
+.status-resolvido {
+    background-color: #d4edda;
+    color: #155724;
+}
+
+/* Profile */
+.profile-header {
+    background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+    color: white;
+    padding: 3rem 0;
+    border-radius: 0 0 30px 30px;
+    margin-bottom: -50px;
+}
+
+.profile-avatar {
+    width: 150px;
+    height: 150px;
+    border: 5px solid white;
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+/* Comments */
+.comment-card {
+    border-left: 4px solid var(--primary-color);
+    background-color: #f8f9fa;
+}
+
+/* Map */
+#map {
+    height: 400px;
+    border-radius: 15px;
+    border: 2px solid #dee2e6;
+}
+
+/* Photo upload */
+.photo-preview {
+    width: 150px;
+    height: 150px;
+    object-fit: cover;
+    border-radius: 10px;
+    margin: 5px;
+}
+
+/* Dark mode */
+[data-bs-theme="dark"] {
+    background-color: #121212;
+    color: #e0e0e0;
+}
+
+[data-bs-theme="dark"] .card {
+    background-color: #1e1e1e;
+    color: #e0e0e0;
+}
+
+[data-bs-theme="dark"] .bg-light {
+    background-color: #2d2d2d !important;
+}
+
+/* Buttons */
+.btn-primary {
+    background-color: var(--primary-color);
+    border-color: var(--primary-color);
+    padding: 10px 25px;
+    border-radius: 10px;
+    font-weight: 600;
+}
+
+.btn-primary:hover {
+    background-color: var(--secondary-color);
+    border-color: var(--secondary-color);
+}
+
+/* Category badges */
+.badge-category {
+    padding: 8px 16px;
+    border-radius: 20px;
+    font-size: 0.9rem;
+}
+
+.bg-buraco {
+    background-color: #ff6b6b;
+    color: white;
+}
+
+.bg-esgoto {
+    background-color: #4ecdc4;
+    color: white;
+}
+
+.bg-lixo {
+    background-color: #45b7d1;
+    color: white;
+}
+
+.bg-poste {
+    background-color: #96ceb4;
+    color: white;
+}
+
+.bg-outros {
+    background-color: #feca57;
+    color: white;
+}
+
+/* Animations */
+.fade-in {
+    animation: fadeIn 0.5s ease-in;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .profile-header {
+        padding: 2rem 0;
+    }
+    
+    .profile-avatar {
+        width: 120px;
+        height: 120px;
+    }
+    
+    #map {
+        height: 300px;
+    }
+}

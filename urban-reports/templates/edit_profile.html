@@ -1,0 +1,68 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <h2 class="mb-4">Editar Perfil</h2>
+        <form method="POST" action="{{ url_for('edit_profile') }}">
+            <div class="row">
+                <div class="col-md-6 mb-3">
+                    <label for="email" class="form-label">Email</label>
+                    <input type="email" class="form-control" id="email" name="email" value="{{ current_user.email }}" required>
+                </div>
+                <div class="col-md-6 mb-3">
+                    <label for="username" class="form-label">Identificação de usuário</label>
+                    <input type="text" class="form-control" id="username" name="username" value="{{ current_user.username }}" required>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-6 mb-3">
+                    <label for="name" class="form-label">Nome</label>
+                    <input type="text" class="form-control" id="name" name="name" value="{{ current_user.name }}" required>
+                </div>
+                <div class="col-md-6 mb-3">
+                    <label for="surname" class="form-label">Sobrenome</label>
+                    <input type="text" class="form-control" id="surname" name="surname" value="{{ current_user.surname }}" required>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-6 mb-3">
+                    <label for="birth_date" class="form-label">Data de Nascimento</label>
+                    <input type="date" class="form-control" id="birth_date" name="birth_date" value="{{ current_user.birth_date }}">
+                </div>
+                <div class="col-md-6 mb-3">
+                    <label for="gender" class="form-label">Sexo</label>
+                    <select class="form-select" id="gender" name="gender">
+                        <option value="">Selecione</option>
+                        <option value="M" {% if current_user.gender == 'M' %}selected{% endif %}>Masculino</option>
+                        <option value="F" {% if current_user.gender == 'F' %}selected{% endif %}>Feminino</option>
+                        <option value="O" {% if current_user.gender == 'O' %}selected{% endif %}>Outro</option>
+                    </select>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-6 mb-3">
+                    <label for="race" class="form-label">Cor/Raça</label>
+                    <input type="text" class="form-control" id="race" name="race" value="{{ current_user.race }}">
+                </div>
+                <div class="col-md-6 mb-3">
+                    <label for="phone" class="form-label">Celular</label>
+                    <input type="tel" class="form-control" id="phone" name="phone" value="{{ current_user.phone }}">
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-6 mb-3">
+                    <label for="cpf" class="form-label">CPF</label>
+                    <input type="text" class="form-control" id="cpf" name="cpf" value="{{ current_user.cpf }}">
+                </div>
+                <div class="col-md-6 mb-3">
+                    <label for="city" class="form-label">Cidade</label>
+                    <input type="text" class="form-control" id="city" name="city" value="{{ current_user.city }}">
+                </div>
+            </div>
+            <button type="submit" class="btn btn-primary">Salvar Alterações</button>
+            <a href="{{ url_for('profile') }}" class="btn btn-secondary">Cancelar</a>
+        </form>
+    </div>
+</div>
+{% endblock %}

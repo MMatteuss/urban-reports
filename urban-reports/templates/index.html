@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="jumbotron bg-light p-5 rounded">
+    <h1 class="display-4">Urban Reports</h1>
+    <p class="lead">Reporte problemas urbanos em sua cidade. Ajude a melhorar sua comunidade!</p>
+    <hr class="my-4">
+    <p>Buracos, esgotos abertos, lixo acumulado, postes caídos. Reporte e acompanhe a solução.</p>
+    <a class="btn btn-primary btn-lg" href="{{ url_for('register') }}" role="button">Comece Agora</a>
+</div>
+
+<div class="row mt-5">
+    <div class="col-md-4">
+        <div class="card">
+            <div class="card-body">
+                <h5 class="card-title">Reporte Problemas</h5>
+                <p class="card-text">Envie fotos e descrições de problemas urbanos que você encontrar.</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card">
+            <div class="card-body">
+                <h5 class="card-title">Acompanhe Soluções</h5>
+                <p class="card-text">Veja o status dos problemas reportados e quando foram resolvidos.</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card">
+            <div class="card-body">
+                <h5 class="card-title">Colabore com a Comunidade</h5>
+                <p class="card-text">Comente e vote nos problemas mais urgentes da sua região.</p>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

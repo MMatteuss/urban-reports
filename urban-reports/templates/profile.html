@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-4">
+        <div class="card">
+            <div class="card-body text-center">
+                <h5 class="card-title">{{ current_user.name }} {{ current_user.surname }}</h5>
+                <p class="card-text">{{ current_user.email }}</p>
+                <p class="card-text">@{{ current_user.username }}</p>
+                <a href="{{ url_for('edit_profile') }}" class="btn btn-primary">Editar Perfil</a>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-8">
+        <h3>Meus Reportes</h3>
+        {% for post in current_user.posts %}
+            <div class="card mb-3">
+                <div class="card-body">
+                    <h5 class="card-title">{{ post.title }}</h5>
+                    <p class="card-text">{{ post.description[:200] }}...</p>
+                    <a href="{{ url_for('post_detail', post_id=post.id) }}" class="btn btn-sm btn-primary">Ver</a>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

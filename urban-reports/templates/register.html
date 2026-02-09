@@ -1,0 +1,127 @@
+{% extends "base.html" %}
+
+{% block title %}Criar Conta - Urban Reports{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <div class="card shadow">
+            <div class="card-body p-4">
+                <h2 class="text-center mb-4">Criar Nova Conta</h2>
+                
+                <form method="POST" action="{{ url_for('register') }}">
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="email" class="form-label">Email *</label>
+                            <input type="email" class="form-control" id="email" name="email" required>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="username" class="form-label">Nome de Usuário *</label>
+                            <input type="text" class="form-control" id="username" name="username" required>
+                        </div>
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="password" class="form-label">Senha *</label>
+                            <input type="password" class="form-control" id="password" name="password" required>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="confirm_password" class="form-label">Confirmar Senha *</label>
+                            <input type="password" class="form-control" id="confirm_password" name="confirm_password" required>
+                        </div>
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="name" class="form-label">Nome *</label>
+                            <input type="text" class="form-control" id="name" name="name" required>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="surname" class="form-label">Sobrenome *</label>
+                            <input type="text" class="form-control" id="surname" name="surname" required>
+                        </div>
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="birth_date" class="form-label">Data de Nascimento</label>
+                            <input type="date" class="form-control" id="birth_date" name="birth_date">
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="gender" class="form-label">Sexo</label>
+                            <select class="form-select" id="gender" name="gender">
+                                <option value="">Selecione...</option>
+                                <option value="M">Masculino</option>
+                                <option value="F">Feminino</option>
+                                <option value="O">Outro</option>
+                                <option value="N">Prefiro não informar</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="phone" class="form-label">Celular</label>
+                            <input type="tel" class="form-control" id="phone" name="phone">
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="cpf" class="form-label">CPF</label>
+                            <input type="text" class="form-control" id="cpf" name="cpf" maxlength="14">
+                        </div>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="city" class="form-label">Cidade</label>
+                        <input type="text" class="form-control" id="city" name="city">
+                    </div>
+                    
+                    <div class="mb-3 form-check">
+                        <input type="checkbox" class="form-check-input" id="agree_terms" name="agree_terms" required>
+                        <label class="form-check-label" for="agree_terms">
+                            Eu concordo com os <a href="#" class="text-decoration-none">Termos de Uso</a> e 
+                            <a href="#" class="text-decoration-none">Política de Privacidade</a>
+                        </label>
+                    </div>
+                    
+                    <div class="d-grid gap-2">
+                        <button type="submit" class="btn btn-primary">Criar Conta</button>
+                        <a href="{{ url_for('login') }}" class="btn btn-outline-secondary">Já tenho uma conta</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+document.getElementById('cpf').addEventListener('input', function(e) {
+    let value = e.target.value.replace(/\D/g, '');
+    
+    if (value.length > 3 && value.length <= 6) {
+        value = value.replace(/(\d{3})(\d+)/, '$1.$2');
+    } else if (value.length > 6 && value.length <= 9) {
+        value = value.replace(/(\d{3})(\d{3})(\d+)/, '$1.$2.$3');
+    } else if (value.length > 9) {
+        value = value.replace(/(\d{3})(\d{3})(\d{3})(\d+)/, '$1.$2.$3-$4');
+    }
+    
+    e.target.value = value;
+});
+
+// Password confirmation
+document.querySelector('form').addEventListener('submit', function(e) {
+    const password = document.getElementById('password').value;
+    const confirmPassword = document.getElementById('confirm_password').value;
+    
+    if (password !== confirmPassword) {
+        e.preventDefault();
+        Swal.fire({
+            title: 'Erro!',
+            text: 'As senhas não coincidem.',
+            icon: 'error'
+        });
+    }
+});
+</script>
+{% endblock %}

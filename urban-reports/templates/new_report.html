@@ -1,0 +1,165 @@
+{% extends "base.html" %}
+
+{% block title %}Novo Reporte - Urban Reports{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+<style>
+    #map { height: 400px; }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-lg-10">
+        <div class="card shadow">
+            <div class="card-body p-4">
+                <h2 class="text-center mb-4">Reportar Problema Urbano</h2>
+                
+                <form method="POST" action="{{ url_for('new_report') }}" enctype="multipart/form-data" class="needs-validation" novalidate>
+                    <!-- Basic Information -->
+                    <div class="mb-4">
+                        <h5 class="mb-3">Informações Básicas</h5>
+                        
+                        <div class="mb-3">
+                            <label for="title" class="form-label">Título do Problema *</label>
+                            <input type="text" class="form-control" id="title" name="title" 
+                                   placeholder="Ex: Buraco na Avenida Principal" required>
+                            <div class="invalid-feedback">
+                                Por favor, insira um título para o reporte.
+                            </div>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="category" class="form-label">Categoria *</label>
+                            <select class="form-select" id="category" name="category" required>
+                                <option value="">Selecione uma categoria...</option>
+                                <option value="buraco">Buraco na via</option>
+                                <option value="esgoto">Esgoto a céu aberto</option>
+                                <option value="lixo">Acúmulo de lixo</option>
+                                <option value="poste">Poste caído/danificado</option>
+                                <option value="iluminacao">Falta de iluminação</option>
+                                <option value="agua">Vazamento de água</option>
+                                <option value="arvore">Árvore caída/risco</option>
+                                <option value="calçada">Calçada danificada</option>
+                                <option value="outros">Outros problemas</option>
+                            </select>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="description" class="form-label">Descrição Detalhada *</label>
+                            <textarea class="form-control" id="description" name="description" 
+                                      rows="5" placeholder="Descreva o problema com detalhes..." required></textarea>
+                            <small class="text-muted">Inclua informações como tamanho, localização exata, perigos, etc.</small>
+                        </div>
+                    </div>
+                    
+                    <!-- Photos -->
+                    <div class="mb-4">
+                        <h5 class="mb-3">Fotos do Local</h5>
+                        <p class="text-muted">Adicione fotos que ajudem a entender o problema (máximo 5 fotos).</p>
+                        
+                        <div class="mb-3">
+                            <input type="file" class="form-control" id="photos" name="photos" 
+                                   accept="image/*" multiple>
+                        </div>
+                        
+                        <div id="photo-preview" class="d-flex flex-wrap gap-2 mb-3"></div>
+                    </div>
+                    
+                    <!-- Location -->
+                    <div class="mb-4">
+                        <h5 class="mb-3">Localização</h5>
+                        
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label for="address" class="form-label">Endereço *</label>
+                                <input type="text" class="form-control" id="address" name="address" 
+                                       placeholder="Ex: Avenida Principal, 123 - Centro" required>
+                            </div>
+                            <div class="col-md-3">
+                                <label for="latitude" class="form-label">Latitude</label>
+                                <input type="number" step="any" class="form-control" id="latitude" name="latitude">
+                            </div>
+                            <div class="col-md-3">
+                                <label for="longitude" class="form-label">Longitude</label>
+                                <input type="number" step="any" class="form-control" id="longitude" name="longitude">
+                            </div>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <button type="button" class="btn btn-outline-primary" id="get-location">
+                                <i class="bi bi-geo-alt"></i> Usar Minha Localização
+                            </button>
+                            <small class="text-muted ms-2">Permita o acesso à localização no navegador.</small>
+                        </div>
+                        
+                        <div id="map" class="mb-3"></div>
+                    </div>
+                    
+                    <!-- Submit -->
+                    <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                        <a href="{{ url_for('dashboard') }}" class="btn btn-secondary me-md-2">Cancelar</a>
+                        <button type="submit" class="btn btn-primary">
+                            <i class="bi bi-send"></i> Publicar Reporte
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script>
+let map;
+let marker;
+
+document.addEventListener('DOMContentLoaded', function() {
+    // Initialize map
+    map = L.map('map').setView([-23.5505, -46.6333], 13); // São Paulo center
+    
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '© OpenStreetMap contributors'
+    }).addTo(map);
+    
+    // Add click event to map
+    map.on('click', function(e) {
+        if (marker) {
+            map.removeLayer(marker);
+        }
+        
+        marker = L.marker(e.latlng).addTo(map);
+        document.getElementById('latitude').value = e.latlng.lat;
+        document.getElementById('longitude').value = e.latlng.lng;
+        
+        // Reverse geocode
+        fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${e.latlng.lat}&lon=${e.latlng.lng}`)
+            .then(response => response.json())
+            .then(data => {
+                document.getElementById('address').value = data.display_name;
+            });
+    });
+    
+    // Update marker when coordinates change
+    document.getElementById('latitude').addEventListener('change', updateMarker);
+    document.getElementById('longitude').addEventListener('change', updateMarker);
+    
+    function updateMarker() {
+        const lat = parseFloat(document.getElementById('latitude').value);
+        const lng = parseFloat(document.getElementById('longitude').value);
+        
+        if (!isNaN(lat) && !isNaN(lng)) {
+            if (marker) {
+                map.removeLayer(marker);
+            }
+            
+            marker = L.marker([lat, lng]).addTo(map);
+            map.setView([lat, lng], 15);
+        }
+    }
+});
+</script>
+{% endblock %}
