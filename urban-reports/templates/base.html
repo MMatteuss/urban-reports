@@ -18,8 +18,14 @@
     <!-- Navigation -->
     <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
         <div class="container">
-            <a class="navbar-brand" href="{{ url_for('index') }}">
-                <i class="bi bi-building-exclamation"></i> Urban Reports
+            <a class="navbar-brand logo-container" href="{{ url_for('index') }}">
+                <img src="{{ url_for('static', filename='img/UrbanReports-icon.png') }}" 
+                    class="logo-img" 
+                    alt="Urban Reports Logo">
+                <div>
+                    <span class="logo-text">Urban Reports</span>
+                    <span class="logo-tagline">Sua cidade em suas mãos</span>
+                </div>
             </a>
             
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">

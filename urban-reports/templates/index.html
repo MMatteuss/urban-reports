@@ -2,11 +2,21 @@
 
 {% block content %}
 <div class="jumbotron bg-light p-5 rounded">
-    <h1 class="display-4">Urban Reports</h1>
-    <p class="lead">Reporte problemas urbanos em sua cidade. Ajude a melhorar sua comunidade!</p>
+    <div class="hero-logo">
+        <img src="{{ url_for('static', filename='img/UrbanReports.png') }}" 
+            class="logo-img" 
+            alt="Urban Reports Logo">
+        <div>
+            <h1 class="logo-text">Urban Reports</h1>
+            <p class="logo-tagline">Reporte problemas. Transforme sua cidade.</p>
+        </div>
+    </div>
     <hr class="my-4">
-    <p>Buracos, esgotos abertos, lixo acumulado, postes caídos. Reporte e acompanhe a solução.</p>
-    <a class="btn btn-primary btn-lg" href="{{ url_for('register') }}" role="button">Comece Agora</a>
+    <div class="centroo">
+        <p>Buracos, esgotos abertos, lixo acumulado, postes caídos. Reporte e acompanhe a solução.</p>
+    
+        <a class="btn btn-primary btn-lg" href="{{ url_for('register') }}" role="button">Comece Agora</a>
+    </div>
 </div>
 
 <div class="row mt-5">
